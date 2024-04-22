@@ -18,5 +18,7 @@ namespace Core.Model
 		public Advertisement Advertisement { get; set; }
 
 		public User User { get; set; }
+
+		public Classroom Classroom { get; set; }	
 	}
 }
