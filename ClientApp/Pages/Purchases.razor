@@ -1,7 +1,52 @@
 ﻿@page "/purchases"
+@inject HttpClient httpClient
+@using Core.Model;
 
 <h3>Purchases</h3>
 
-@code {
+@if (purchases == null)
+{
+    <p>Loading...</p>
+}
+else if (purchases.Count == 0)
+{
+    <p>No purchases found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Purchase ID</th>
+                <th>Total Price</th>
+                <th>Advertisement</th>
+                <th>User</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var purchase in purchases)
+            {
+                <tr>
+                    <td>@purchase.PurchaseId</td>
+                    <td>@purchase.TotalPrice</td>
+                    <td>@purchase.Advertisement.Name</td>
+                    <td>@purchase.User.Username</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
+
+@code {
+    List<Purchase> purchases;
+    Purchase newPurchase = new Purchase();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch user's purchase history from the server
+        purchases = await httpClient.GetFromJsonAsync<List<Purchase>>("api/purchase/getall");
+    }
+
+    
 }
