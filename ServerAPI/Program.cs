@@ -1,3 +1,6 @@
+using ServerAPI.Repositories.Interfaces;
+using ServerAPI.Repositories;
+
 namespace ServerAPI
 {
     public class Program
@@ -7,6 +10,11 @@ namespace ServerAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddSingleton<IPurchaseRepository, PurchaseRepository>();
+            builder.Services.AddSingleton<IAdsRepository, AdsRepository>();
+            builder.Services.AddSingleton<ILoginRepository, LoginRepository>();
+            builder.Services.AddSingleton<IMyprofileRepository, MyprofileRepository>();
 
             builder.Services.AddControllers();
 
