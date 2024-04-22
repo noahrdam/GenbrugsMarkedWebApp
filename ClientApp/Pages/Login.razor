@@ -1,5 +1,106 @@
 ﻿@page "/login"
+@using Core.Model
+@inject HttpClient Http
+
+@if (!createAccount)
+{
+    <h3>Login</h3>
+    <EditForm EditContext="@loginEditContext" OnValidSubmit="@HandleLogin" class="row p-3">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="col-md-12 mb-3">
+            <label for="LoginUsername">Username</label>
+            <InputText id="LoginUsername" @bind-Value="loginUser.Username" class="form-control" />
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="LoginPassword">Password</label>
+            <InputText id="LoginPassword" @bind-Value="loginUser.Password" class="form-control" />
+        </div>
+        <div class="col-md-12 mb-3">
+            <button type="submit" class="btn btn-primary">Log in</button>
+            <button type="button" class="btn btn-secondary" @onclick="ShowCreateAccount">Create an Account</button>
+        </div>
+    </EditForm>
+}
+else
+{
+    <h3>Create Account</h3>
+    <EditForm EditContext="@createEditContext" OnValidSubmit="@HandleCreateAccount" class="row p-3">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="col-md-12 mb-3">
+            <label for="CreateUsername">Username</label>
+            <InputText id="CreateUsername" @bind-Value="createUser.Username" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="CreatePassword">Password</label>
+            <InputText id="CreatePassword" @bind-Value="createUser.Password" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="CreateEmail">Email</label>
+            <InputText id="CreateEmail" @bind-Value="createUser.Email" class="form-control" />
+        </div>
+        <div class="col-md-12 mb-3">
+            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="button" class="btn btn-info" @onclick="ShowLogin">Back to Login</button>
+        </div>
+    </EditForm>
+}
 
 @code {
-   
+
+    private User createUser = new User();
+    private User loginUser = new User();
+    private User currentuser = new User();
+    private EditContext loginEditContext;
+    private EditContext createEditContext;
+    private string serverurl = "https://localhost:7148";
+    private bool createAccount = false;
+
+    protected override void OnInitialized()
+    {
+        loginEditContext = new EditContext(loginUser);
+        createEditContext = new EditContext(createUser);
+    }
+
+    private async Task<bool> HandleLogin()
+    {
+        var response = await Http.GetFromJsonAsync<bool>(serverurl + "/api/login/verify?username=" + loginUser.Username + "&password=" + loginUser.Password);
+
+        if (response)
+        {
+            Console.WriteLine("Login successful");
+        }
+        else
+        {
+            Console.WriteLine("Login failed");
+        }
+
+        return response;
+    }
+
+    private async Task HandleCreateAccount()
+    {
+        var response = await Http.PostAsJsonAsync($"{serverurl}/api/login/createaccount", createUser);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("User created successfully");
+            createAccount = false; // Optionally hide the create account form
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("Failed to create user " + error);
+        }
+    }
+
+    private void ShowCreateAccount()
+    {
+        createAccount = true;
+    }
+
+    private void ShowLogin()
+    {
+        createAccount = false;
+    }
 }

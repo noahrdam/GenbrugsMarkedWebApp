@@ -14,9 +14,7 @@ namespace ServerAPI.Repositories
         public LoginRepository()
         {
 
-            var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/?retryWrites=true&w=majority&appName=webshopDB";
-
-
+            var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/";
 
             try
             {
@@ -36,29 +34,34 @@ namespace ServerAPI.Repositories
             // Provide the name of the database and collection you want to use.
             // If they don't already exist, the driver and Atlas will create them
             // automatically when you first write data.
-            var dbName = "webshopDB";
-            var collectionName = "users";
+            var dbName = "Genbrug";
+            var collectionName = "User";
 
             collection = client.GetDatabase(dbName)
                .GetCollection<User>(collectionName);
 
         }
 
-        public void CreateAccount()
+        public void CreateAccount(User user)
         {
-
+            var filter = Builders<User>.Filter.Eq("Email", user.Email);
+            if (collection.Find(filter).Any())
+            {
+                throw new Exception("This email is already used to create an account");
+            }
+            else
+            {
+                user.Id = ObjectId.GenerateNewId(); 
+                collection.InsertOne(user);
+            }
         }
 
-        public void Login()
+        public bool VerifyLogin(string username, string password)
         {
+            var filter = Builders<User>.Filter.Eq("Username", username) & Builders<User>.Filter.Eq("Password", password);
+            var user = collection.Find(filter).SingleOrDefault();
 
+            return user != null;
         }
-
-        public void ValidateLogin()
-        {
-
-        }
-
-
     }
 }
