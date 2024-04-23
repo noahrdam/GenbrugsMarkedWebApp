@@ -1,6 +1,7 @@
 using ServerAPI.Repositories.Interfaces;
 using ServerAPI.Repositories;
 
+
 namespace ServerAPI
 {
     public class Program
@@ -16,6 +17,17 @@ namespace ServerAPI
             builder.Services.AddSingleton<ILoginRepository, LoginRepository>();
             builder.Services.AddSingleton<IMyprofileRepository, MyprofileRepository>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("policy",
+                                  policy =>
+                                  {
+                                      policy.AllowAnyOrigin();
+                                      policy.AllowAnyMethod();
+                                      policy.AllowAnyHeader();
+                                  });
+            });
+
             builder.Services.AddControllers();
 
             var app = builder.Build();
@@ -26,10 +38,15 @@ namespace ServerAPI
 
             app.UseAuthorization();
 
+            app.UseCors("policy");
 
             app.MapControllers();
 
             app.Run();
+
+
         }
+
+        
     }
 }

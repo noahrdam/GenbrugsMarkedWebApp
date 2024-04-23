@@ -27,7 +27,8 @@ namespace HelloBlazor.Server.Controllers
         [Route("getall")]
         public List<Purchase> GetAllPurchases()
         {
-            return mRepo.GetAllPurchases();
+            var list= mRepo.GetAllPurchases().ToList();
+            return list;
         }   
     }
 }
