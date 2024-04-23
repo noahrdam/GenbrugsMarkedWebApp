@@ -21,11 +21,8 @@ namespace ServerAPI
                 options.AddPolicy("policy",
                     policy =>
                     {
-                        policy.AllowAnyOrigin();
-                        policy.AllowAnyMethod();
-                    policy.AllowAnyHeader();
-                });
-                
+                        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    });
             });
 
             builder.Services.AddControllers();

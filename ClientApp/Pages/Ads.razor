@@ -2,7 +2,6 @@
 @using Core.Model
 @inject HttpClient httpClient
 
-
 <h1>Advertisements</h1>
 
 <div>
@@ -11,12 +10,22 @@
 </div>
 
 <div>
-    <input type="text" @bind="categoryFilter" placeholder="Filter by category..." />
+    <select @bind="categoryFilter">
+        <option value="">Select a category...</option>
+        <option value="Tøj">Tøj</option>
+        <option value="IT-udstyr">IT-udstyr</option>
+        <option value="Bøger">Bøger</option>
+    </select>
     <button @onclick="FilterAdvertisements">Filter</button>
 </div>
 
 <div>
-    <input type="text" @bind="statusFilter" placeholder="Filter by status..." />
+    <select @bind="statusFilter">
+        <option value="">Select a status...</option>
+        <option value="Aktiv">Aktiv</option>
+        <option value="Reserveret">Reserveret</option>
+        <option value="Inaktiv">Inaktiv</option>
+    </select>
     <button @onclick="FilterByStatus">Filter</button>
 </div>
 
@@ -24,6 +33,10 @@
     <input type="number" @bind="minPrice" placeholder="Min price" min="0" />
     <input type="number" @bind="maxPrice" placeholder="Max price" min="0" />
     <button @onclick="FilterByPriceRange">Filter</button>
+</div>
+
+<div>
+    <button @onclick="ResetFiltersAndReload">Reset Filters</button>
 </div>
 
 @if (advertisements == null)
@@ -38,6 +51,7 @@ else
                 <th>Name</th>
                 <th>Price</th>
                 <th>Category</th>
+                <th>Status</th>
                 <th>Description</th>
             </tr>
         </thead>
@@ -48,6 +62,9 @@ else
                     <td>@ad.Name</td>
                     <td>@ad.Price</td>
                     <td>@ad.Category</td>
+                    <td>
+                        <span class="@GetStatusClass(ad.Status)">@ad.Status</span>
+                    </td>
                     <td>@ad.Description</td>
                 </tr>
             }
@@ -62,13 +79,13 @@ else
     private string statusFilter = "";
     private double minPrice = 0;
     private double maxPrice = 1000;
-    private string serverURL = "https://localhost:5261/";
+    private string serverURL = "http://localhost:5261/";
 
     protected override async Task OnInitializedAsync()
     {
-        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/getall");
+        await ReloadAdvertisements();
     }
-    
+
     private async Task SearchAdvertisements()
     {
         advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/search?searchKeyword={searchText}");
@@ -76,16 +93,52 @@ else
 
     private async Task FilterAdvertisements()
     {
-        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/category/{categoryFilter}");
+        if (!string.IsNullOrWhiteSpace(categoryFilter))
+        {
+            advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/category/{categoryFilter}");
+        }
     }
 
     private async Task FilterByStatus()
     {
-        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/status/{statusFilter}");
+        if (!string.IsNullOrWhiteSpace(statusFilter))
+        {
+            advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/status/{statusFilter}");
+        }
     }
 
     private async Task FilterByPriceRange()
     {
         advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/price?minPrice={minPrice}&maxPrice={maxPrice}");
+    }
+
+    private async Task ResetFiltersAndReload()
+    {
+        searchText = "";
+        categoryFilter = "";
+        statusFilter = "";
+        minPrice = 0;
+        maxPrice = 1000;
+        await ReloadAdvertisements();
+    }
+
+    private async Task ReloadAdvertisements()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/getall");
+    }
+
+    private string GetStatusClass(string status)
+    {
+        switch (status)
+        {
+            case "Aktiv":
+                return "badge bg-success";
+            case "Reserveret":
+                return "badge bg-warning text-dark";
+            case "Inaktiv":
+                return "badge bg-secondary";
+            default:
+                return "badge bg-light text-dark";
+        }
     }
 }
