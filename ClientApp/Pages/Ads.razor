@@ -1,8 +1,91 @@
 ﻿@page "/ads"
+@using Core.Model
+@inject HttpClient httpClient
 
 
-<h3>Ads</h3>
+<h1>Advertisements</h1>
+
+<div>
+    <input type="text" @bind="searchText" placeholder="Search by name or description..." />
+    <button @onclick="SearchAdvertisements">Search</button>
+</div>
+
+<div>
+    <input type="text" @bind="categoryFilter" placeholder="Filter by category..." />
+    <button @onclick="FilterAdvertisements">Filter</button>
+</div>
+
+<div>
+    <input type="text" @bind="statusFilter" placeholder="Filter by status..." />
+    <button @onclick="FilterByStatus">Filter</button>
+</div>
+
+<div>
+    <input type="number" @bind="minPrice" placeholder="Min price" min="0" />
+    <input type="number" @bind="maxPrice" placeholder="Max price" min="0" />
+    <button @onclick="FilterByPriceRange">Filter</button>
+</div>
+
+@if (advertisements == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ad in advertisements)
+            {
+                <tr>
+                    <td>@ad.Name</td>
+                    <td>@ad.Price</td>
+                    <td>@ad.Category</td>
+                    <td>@ad.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
+    private List<Advertisement> advertisements = new();
+    private string searchText = "";
+    private string categoryFilter = "";
+    private string statusFilter = "";
+    private double minPrice = 0;
+    private double maxPrice = 1000;
+    private string serverURL = "https://localhost:5261/";
 
+    protected override async Task OnInitializedAsync()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/getall");
+    }
+    
+    private async Task SearchAdvertisements()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/search?searchKeyword={searchText}");
+    }
+
+    private async Task FilterAdvertisements()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/category/{categoryFilter}");
+    }
+
+    private async Task FilterByStatus()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/status/{statusFilter}");
+    }
+
+    private async Task FilterByPriceRange()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/price?minPrice={minPrice}&maxPrice={maxPrice}");
+    }
 }
