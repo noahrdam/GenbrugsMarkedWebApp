@@ -12,6 +12,6 @@ namespace ServerAPI.Repositories.Interfaces
         List<Advertisement> GetAdvertisementsByDetails(string searchKeyword);
         Task<List<Advertisement>> GetAdvertisementsSortedByDate();
 
-        void CreateAdvertisement(Advertisement advertisement);
+        void CreateAdvertisement2(Advertisement advertisement);
     }
 }

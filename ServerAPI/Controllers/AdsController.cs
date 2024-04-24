@@ -57,9 +57,9 @@ namespace ServerAPI.Controllers
 
         
         [HttpPost]
-        public ActionResult<Advertisement> CreateAdvertisement([FromBody] Advertisement advertisement)
+        public ActionResult<Advertisement> CreateAdvertisement2([FromBody] Advertisement advertisement)
         {
-            mRepo.CreateAdvertisement(advertisement);
+            mRepo.CreateAdvertisement2(advertisement);
             return CreatedAtAction(nameof(GetAllAdvertisements), new { id = advertisement.Id }, advertisement);
         }
 

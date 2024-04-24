@@ -36,7 +36,7 @@ namespace Core.Model
 
 		public User User { get; set; }
 
-		public Classroom Classroom { get; set; }
+		public string Classroom { get; set; }
 
 		public DateTime Date { get; set; }
 	}
