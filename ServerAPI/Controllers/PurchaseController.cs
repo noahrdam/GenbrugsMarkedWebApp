@@ -29,6 +29,18 @@ namespace HelloBlazor.Server.Controllers
         {
             var list= mRepo.GetAllPurchases().ToList();
             return list;
-        }   
+        }
+
+        [HttpGet]
+        [Route("getbyusername/{username}")]
+        public async Task<ActionResult<List<Purchase>>> GetPurchasesByUsername(string username)
+        {
+            var purchases = await mRepo.GetPurchasesByUsername(username);
+            if (purchases == null || purchases.Count == 0)
+            {
+                return NotFound("No purchases found for the specified username.");
+            }
+            return purchases;
+        }
     }
 }

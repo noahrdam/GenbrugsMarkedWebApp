@@ -53,5 +53,12 @@ namespace ServerAPI.Repositories
         {
             return collection.Find(_ => true).ToList();
         }
+
+        public async Task<List<Purchase>> GetPurchasesByUsername(string username)
+        {
+            var filter = Builders<Purchase>.Filter.Eq(p => p.User.Username, username);
+            return await collection.Find(filter).ToListAsync();
+        }
+
     }
 }

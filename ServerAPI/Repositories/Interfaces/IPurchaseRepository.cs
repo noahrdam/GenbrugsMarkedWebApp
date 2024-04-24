@@ -6,5 +6,7 @@ namespace ServerAPI.Repositories.Interfaces
     {
         void MakePurchase(Purchase purchase);
         List<Purchase> GetAllPurchases();
+
+        Task<List<Purchase>> GetPurchasesByUsername(string username);
     }
 }
