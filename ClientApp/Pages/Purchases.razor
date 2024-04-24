@@ -4,15 +4,14 @@
 
 
 
-<h3>Purchases</h3>
+
+
+
+<h1>Purchase History</h1>
 
 @if (purchases == null)
 {
     <p>Loading...</p>
-}
-else if (purchases.Count == 0)
-{
-    <p>No purchases found.</p>
 }
 else
 {
@@ -25,6 +24,7 @@ else
                 <th>Total Price</th>
                 <th>Advertisement</th>
                 <th>User</th>
+                <th>Classroom</th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +35,7 @@ else
                     <td>@purchase.TotalPrice</td>
                     <td>@purchase.Advertisement.Name</td>
                     <td>@purchase.User.Username</td>
+                    <td>@purchase.Classroom.ClassroomId</td>
                 </tr>
             }
         </tbody>
