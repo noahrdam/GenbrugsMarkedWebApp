@@ -16,7 +16,7 @@ namespace ServerAPI
             // Add services to the container.
 
             builder.Services.AddSingleton<IPurchaseRepository, PurchaseRepository>();
-            builder.Services.AddSingleton<IAdsRepository, AdsRepository>();
+          //  builder.Services.AddSingleton<IAdsRepository, AdsRepository>();
             builder.Services.AddSingleton<ILoginRepository, LoginRepository>();
             builder.Services.AddSingleton<IMyprofileRepository, MyprofileRepository>();
 
