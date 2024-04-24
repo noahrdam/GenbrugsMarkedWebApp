@@ -1,7 +1,64 @@
 ﻿@page "/purchases"
+@inject HttpClient httpClient
+@using Core.Model
 
-<h3>Purchases</h3>
+
+<h1>Purchase History</h1>
+
+@if (purchases == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Purchase ID</th>
+                <th>Total Price</th>
+                <th>Advertisement</th>
+                <th>User</th>
+                <th>Classroom</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var purchase in purchases)
+            {
+                <tr>
+                    <td>@purchase.PurchaseId</td>
+                    <td>@purchase.TotalPrice</td>
+                    <td>@purchase.Advertisement.Name</td>
+                    <td>@purchase.User.Username</td>
+                    <td>@purchase.Classroom.ClassroomId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
+    
 
+    private string username;
+
+    private List<Purchase> purchases = new();
+   
+    private string serverurl = "https://localhost:7148/";
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch user's purchase history from the server
+        purchases = await httpClient.GetFromJsonAsync<List<Purchase>>($"{serverurl}api/purchase/getall");
+    }
+
+    private async Task GetUserPurchases()
+    {
+        // Fetch specific user's purchase history from the server using the provided username
+        purchases = await httpClient.GetFromJsonAsync<List<Purchase>>($"{serverurl}api/purchase/getbyusername/{username}");
+    }
 }
+
