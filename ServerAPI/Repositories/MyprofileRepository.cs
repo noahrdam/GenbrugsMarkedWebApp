@@ -9,7 +9,6 @@ namespace ServerAPI.Repositories
     {
         private IMongoClient client;
         private IMongoCollection<Advertisement> collection;
-        private IMongoCollection<Advertisement> _advertisementsCollection;
 
         public MyprofileRepository()
         {
@@ -69,14 +68,12 @@ namespace ServerAPI.Repositories
 
         // Tilføj metoden for at hente alle annoncer for en given bruger
 
-        public IEnumerable<Advertisement> GetAdvertisementsByUserName(string userName)
+        public List<Advertisement> GetAdvertisementsByUserName(string username)
         {
             // Assuming 'Advertisement' collection has an embedded 'User' object with a 'Username' field
-            var filter = Builders<Advertisement>.Filter.Eq("User.Username", userName);
-            var advertisements = _advertisementsCollection.Find(filter).ToList();
+            //var filter = Builders<Advertisement>.Filter.Eq("Username", username);
+            var advertisements = collection.Find(ad => ad.User.Username.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
             return advertisements;
         }
-
-
     }
 }

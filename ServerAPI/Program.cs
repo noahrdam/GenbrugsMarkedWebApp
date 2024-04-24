@@ -16,7 +16,7 @@ namespace ServerAPI
             // Add services to the container.
 
             builder.Services.AddSingleton<IPurchaseRepository, PurchaseRepository>();
-            builder.Services.AddSingleton<IAdsRepository, AdsRepository>();
+            //builder.Services.AddSingleton<IAdsRepository, AdsRepository>();
             builder.Services.AddSingleton<ILoginRepository, LoginRepository>();
             builder.Services.AddSingleton<IMyprofileRepository, MyprofileRepository>();
 
@@ -32,19 +32,6 @@ namespace ServerAPI
             });
 
             builder.Services.AddControllers();
-
-            builder.Services.AddSingleton<ILoginRepository, LoginRepository>();
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("policy",
-                                  policy =>
-                                  {
-                                      policy.AllowAnyOrigin();
-                                      policy.AllowAnyMethod();
-                                      policy.AllowAnyHeader();
-                                  });
-            });
 
             var app = builder.Build();
 

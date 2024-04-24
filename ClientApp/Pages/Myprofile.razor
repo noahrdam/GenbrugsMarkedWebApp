@@ -1,6 +1,7 @@
 ﻿@page "/myprofile"
 @using Core.Model
 @inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 
 <h3>Create advertisement</h3>
@@ -46,47 +47,74 @@
     <button type="submit">Delete Advertisement</button>
 </EditForm>
 
-
-<EditForm Model="@userAdvertisementsRequest" OnValidSubmit="@GetAdvertisementsByUserName" class="row p-3">
-    <div class="col-md-6 mb-3">
-        <label for="userName">Enter your username</label>
-        <InputText id="userName" @bind-Value="userAdvertisementsRequest.Username" placeholder="Write your username..." class="form-control" />
-    </div>
-    <button type="submit">Get My Advertisements</button>
-</EditForm>
+<button @onclick="GetAllAdvertisementsByUser">Load My Advertisements</button>
 
 @if (userAdvertisements != null)
 {
     if (userAdvertisements.Any())
     {
-        <h3>My Advertisements</h3>
-        <ul>
-            @foreach (var ad in userAdvertisements)
-            {
-                <li>@ad.Name - @ad.Description</li>
-            }
-        </ul>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Advertisement Name</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ad in userAdvertisements)
+                {
+                    <tr>
+                        <td>@ad.Name</td>
+                        <td>@ad.Price.ToString("C")</td>
+                        <td>@ad.Description</td>
+                        <td>@ad.Category</td>
+                        <td>@ad.Status</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(ad.Image))
+                            {
+                                <img src="@ad.Image" alt="Ad Image" style="height:50px;" />
+                            }
+                        </td>
+                        <td>
+                            <!--<button @onclick="@(() => DeleteAdvertisement(ad.AdvertisementId))">Delete</button>-->
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
     else
     {
-        <p>No advertisements found for the username.</p>
+        <p>No advertisements found.</p>
     }
 }
+
 
 @code {
     private Advertisement deleteadvertisement = new Advertisement();
     private Advertisement makeAdvertisement = new Advertisement();
-    private UserAdvertisementsRequest userAdvertisementsRequest = new UserAdvertisementsRequest();
-
+    private Advertisement getAdvertisement = new Advertisement();
     private EditContext deleteEditContext;
     private EditContext createEditContext;
-    private List<Advertisement> userAdvertisements;
+    private List<Advertisement> userAdvertisements = new List<Advertisement>();
     private string serverurl = "https://localhost:7148";
+    private User? user;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         createEditContext = new EditContext(makeAdvertisement);
         deleteEditContext = new EditContext(deleteadvertisement);
+        user = await LocalStorage.GetItemAsync<User>("loginUser");
+        if (user != null)
+        {
+            makeAdvertisement.User = user;
+            getAdvertisement.User = user;
+        }
     }
 
     private async Task CreateAdvertisement()
@@ -121,10 +149,20 @@
         }
     }
 
-    private async Task GetAdvertisementsByUserName()
+    private async Task GetAllAdvertisementsByUser()
     {
-        var response = await Http.GetFromJsonAsync<List<Advertisement>>($"{serverurl}/api/myprofile/advertisements/{userAdvertisementsRequest.Username}");
-        userAdvertisements = response ?? new List<Advertisement>();
+       var username = user?.Username;
+       var response = await Http.GetFromJsonAsync<List<Advertisement>>($"{serverurl}/api/myprofile/advertisements/{username}");
+       if (response != null)
+        {
+            userAdvertisements = response;
+        }
+        else
+        {
+            userAdvertisements = new List<Advertisement>();
+        }
     }
+
+    
 
 }

@@ -17,6 +17,6 @@ namespace ServerAPI.Repositories.Interfaces
         public void DeleteById(int advertisementId);
 
         // Tilføj metoden for at hente alle annoncer for en given bruger
-        public IEnumerable<Advertisement> GetAdvertisementsByUserName(string userName);
+        public List<Advertisement> GetAdvertisementsByUserName(string username);
     }
 }

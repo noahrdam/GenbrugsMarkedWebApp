@@ -27,7 +27,7 @@ namespace ServerAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("delete/{AdvertisementId:int}")]
+        [Route("delete/{advertisementId:int}")]
         public void DeleteById(int advertisementId)
         {
             mrepo.DeleteById(advertisementId);
@@ -35,16 +35,11 @@ namespace ServerAPI.Controllers
 
         // Endpoint to get all advertisements by a user's username
         [HttpGet]
-        [Route("advertisements/{userName}")]
-        public ActionResult<IEnumerable<Advertisement>> GetAdvertisementsByUserName(string userName)
+        [Route("advertisements/{user}")]
+        public List<Advertisement> GetAdvertisementsByUser(string user)
         {
-            var advertisements = mrepo.GetAdvertisementsByUserName(userName);
-            if (advertisements == null || !advertisements.Any())
-            {
-                return NotFound("No advertisements found for the given user.");
-            }
-
-            return Ok(advertisements);
+            var advertisements = mrepo.GetAdvertisementsByUserName(user).ToList();
+            return advertisements;
         }
 
 
