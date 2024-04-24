@@ -31,6 +31,13 @@ namespace ServerAPI.Controllers
             return mRepo.VerifyLogin(username, password);
         }
 
+        [HttpGet]
+        [Route("getuser")]
+        public User GetUser([FromQuery] string username)
+        {
+            return mRepo.GetUser(username);
+        }
+
     }
 }
 

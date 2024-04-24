@@ -6,5 +6,7 @@ namespace ServerAPI.Repositories.Interfaces
     {
         public void CreateAccount(User user);
         public bool VerifyLogin(string username, string password);
+
+        public User GetUser(string username);
     }
 }
