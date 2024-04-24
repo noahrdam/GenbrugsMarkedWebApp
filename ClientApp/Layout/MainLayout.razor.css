@@ -13,10 +13,13 @@ main {
 }
 
 .top-row {
-    background-color: #f7f7f7;
+    background-color: white;
+    background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGHK6kjN41fkk5ZDILFfvsOvXue_Gw32O1YR4iH7Lw&s);
+    background-repeat: no-repeat;
+    background-position:center;
     border-bottom: 1px solid #d6d5d5;
     justify-content: flex-end;
-    height: 3.5rem;
+    height: 5rem;
     display: flex;
     align-items: center;
 }
@@ -74,4 +77,6 @@ main {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
     }
+
+
 }

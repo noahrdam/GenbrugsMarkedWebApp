@@ -2,40 +2,44 @@
 @using Core.Model
 @inject HttpClient httpClient
 
+<head>
+    <link rel="stylesheet" href="css/pagestyle.css" />
+</head>
+
 <h1>Advertisements</h1>
 
-<div>
+<div class="col-6 mb-3">
     <input type="text" @bind="searchText" placeholder="Search by name or description..." />
     <button @onclick="SearchAdvertisements">Search</button>
 </div>
 
-<div>
+<div class ="col-12 mb-3">
     <select @bind="categoryFilter">
         <option value="">Select a category...</option>
-        <option value="Tøj">Tøj</option>
-        <option value="IT-udstyr">IT-udstyr</option>
-        <option value="Bøger">Bøger</option>
+        <option value="Clothes">Clothes</option>
+        <option value="IT">IT</option>
+        <option value="Books">Books</option>
     </select>
     <button @onclick="FilterAdvertisements">Filter</button>
 </div>
 
-<div>
+<div class="col-12 mb-3">
     <select @bind="statusFilter">
         <option value="">Select a status...</option>
-        <option value="Aktiv">Aktiv</option>
-        <option value="Reserveret">Reserveret</option>
-        <option value="Inaktiv">Inaktiv</option>
+        <option value="Active">Active</option>
+        <option value="Reserved">Reserved</option>
+        <option value="Inactive">Inactive</option>
     </select>
     <button @onclick="FilterByStatus">Filter</button>
 </div>
 
-<div>
+<div class="col-12 mb-3">
     <input type="number" @bind="minPrice" placeholder="Min price" min="0" />
     <input type="number" @bind="maxPrice" placeholder="Max price" min="0" />
     <button @onclick="FilterByPriceRange">Filter</button>
 </div>
 
-<div>
+<div class="col-12 mb-3">
     <button @onclick="ResetFiltersAndReload">Reset Filters</button>
 </div>
 
@@ -133,11 +137,11 @@ else
     {
         switch (status)
         {
-            case "Aktiv":
+            case "Active":
                 return "badge bg-success";
-            case "Reserveret":
+            case "Reserved":
                 return "badge bg-warning text-dark";
-            case "Inaktiv":
+            case "Inactive":
                 return "badge bg-secondary";
             default:
                 return "badge bg-light text-dark";

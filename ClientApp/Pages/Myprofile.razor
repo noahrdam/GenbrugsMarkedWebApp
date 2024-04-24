@@ -3,6 +3,10 @@
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+<head>
+    <link rel="stylesheet" href="css/pagestyle.css" />
+</head>
+
 
 <h3>Create advertisement</h3>
 
@@ -39,7 +43,7 @@
     </div>
    
 
-    <button type="submit">Create advertisement</button>
+    <button id="CreateAd" type="submit">Create advertisement</button>
 </EditForm>
 
 
@@ -48,7 +52,7 @@
         <label for="adAdvertisementId">Advertisement ID</label>
         <InputNumber id="adAdvertisementId" @bind-Value="deleteadvertisement.AdvertisementId" placeholder="Write Advertisement ID..." class="form-control" />
     </div>
-    <button type="submit">Delete Advertisement</button>
+    <button id="DeleteAd" type="submit">Delete Advertisement</button>
 </EditForm>
 
 <button @onclick="GetAllAdvertisementsByUser">Load My Advertisements</button>
