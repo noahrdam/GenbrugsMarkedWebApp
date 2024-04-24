@@ -36,22 +36,29 @@ namespace ServerAPI.Repositories
             // Provide the name of the database and collection you want to use.
             // If they don't already exist, the driver and Atlas will create them
             // automatically when you first write data.
-            var dbName = "webshopDB";
-            var collectionName = "purchases";
+            var dbName = "Genbrug";
+            var collectionName = "Purchases";
 
             collection = client.GetDatabase(dbName)
                .GetCollection<Purchase>(collectionName);
 
         }
 
-        public void MakePurchase()
+        public void MakePurchase(Purchase purchase)
         {
-
+            collection.InsertOne(purchase);
         }
 
-        public void SavePurchase()
+        public List<Purchase> GetAllPurchases()
         {
-
+            return collection.Find(_ => true).ToList();
         }
+
+        public async Task<List<Purchase>> GetPurchasesByUsername(string username)
+        {
+            var filter = Builders<Purchase>.Filter.Eq(p => p.User.Username, username);
+            return await collection.Find(filter).ToListAsync();
+        }
+
     }
 }
