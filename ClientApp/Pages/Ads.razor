@@ -1,8 +1,144 @@
 ﻿@page "/ads"
+@using Core.Model
+@inject HttpClient httpClient
 
+<h1>Advertisements</h1>
 
-<h3>Ads</h3>
+<div>
+    <input type="text" @bind="searchText" placeholder="Search by name or description..." />
+    <button @onclick="SearchAdvertisements">Search</button>
+</div>
+
+<div>
+    <select @bind="categoryFilter">
+        <option value="">Select a category...</option>
+        <option value="Tøj">Tøj</option>
+        <option value="IT-udstyr">IT-udstyr</option>
+        <option value="Bøger">Bøger</option>
+    </select>
+    <button @onclick="FilterAdvertisements">Filter</button>
+</div>
+
+<div>
+    <select @bind="statusFilter">
+        <option value="">Select a status...</option>
+        <option value="Aktiv">Aktiv</option>
+        <option value="Reserveret">Reserveret</option>
+        <option value="Inaktiv">Inaktiv</option>
+    </select>
+    <button @onclick="FilterByStatus">Filter</button>
+</div>
+
+<div>
+    <input type="number" @bind="minPrice" placeholder="Min price" min="0" />
+    <input type="number" @bind="maxPrice" placeholder="Max price" min="0" />
+    <button @onclick="FilterByPriceRange">Filter</button>
+</div>
+
+<div>
+    <button @onclick="ResetFiltersAndReload">Reset Filters</button>
+</div>
+
+@if (advertisements == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ad in advertisements)
+            {
+                <tr>
+                    <td>@ad.Name</td>
+                    <td>@ad.Price</td>
+                    <td>@ad.Category</td>
+                    <td>
+                        <span class="@GetStatusClass(ad.Status)">@ad.Status</span>
+                    </td>
+                    <td>@ad.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
+    private List<Advertisement> advertisements = new();
+    private string searchText = "";
+    private string categoryFilter = "";
+    private string statusFilter = "";
+    private double minPrice = 0;
+    private double maxPrice = 1000;
+    private string serverURL = "http://localhost:5261/";
 
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadAdvertisements();
+    }
+
+    private async Task SearchAdvertisements()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/search?searchKeyword={searchText}");
+    }
+
+    private async Task FilterAdvertisements()
+    {
+        if (!string.IsNullOrWhiteSpace(categoryFilter))
+        {
+            advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/category/{categoryFilter}");
+        }
+    }
+
+    private async Task FilterByStatus()
+    {
+        if (!string.IsNullOrWhiteSpace(statusFilter))
+        {
+            advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/status/{statusFilter}");
+        }
+    }
+
+    private async Task FilterByPriceRange()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/price?minPrice={minPrice}&maxPrice={maxPrice}");
+    }
+
+    private async Task ResetFiltersAndReload()
+    {
+        searchText = "";
+        categoryFilter = "";
+        statusFilter = "";
+        minPrice = 0;
+        maxPrice = 1000;
+        await ReloadAdvertisements();
+    }
+
+    private async Task ReloadAdvertisements()
+    {
+        advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/getall");
+    }
+
+    private string GetStatusClass(string status)
+    {
+        switch (status)
+        {
+            case "Aktiv":
+                return "badge bg-success";
+            case "Reserveret":
+                return "badge bg-warning text-dark";
+            case "Inaktiv":
+                return "badge bg-secondary";
+            default:
+                return "badge bg-light text-dark";
+        }
+    }
 }
