@@ -11,14 +11,14 @@ namespace Core.Model
     {
         public ObjectId Id { get; set; }
 
-		public int PurchaseId { get; set; }
+		public int? PurchaseId { get; set; }
 
-		public double TotalPrice { get; set; }
+		public double? TotalPrice { get; set; }
 
-		public Advertisement Advertisement { get; set; }
+		public Advertisement? Advertisement { get; set; }
 
-		public User User { get; set; }
+		public User? User { get; set; }
 
-        public Classroom Classroom { get; set; }
+        public string? Classroom { get; set; }
     }
 }

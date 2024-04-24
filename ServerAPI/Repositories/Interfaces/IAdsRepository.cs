@@ -1,4 +1,5 @@
 ﻿using Core.Model;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace ServerAPI.Repositories.Interfaces
@@ -12,6 +13,6 @@ namespace ServerAPI.Repositories.Interfaces
         List<Advertisement> GetAdvertisementsByDetails(string searchKeyword);
         Task<List<Advertisement>> GetAdvertisementsSortedByDate();
 
-        void CreateAdvertisement2(Advertisement advertisement);
+        //void CreateAdvertisement2(Advertisement advertisement);
     }
 }

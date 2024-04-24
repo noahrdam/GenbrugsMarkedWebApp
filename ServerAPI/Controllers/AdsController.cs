@@ -18,7 +18,7 @@ namespace ServerAPI.Controllers
 
         [HttpGet]
         [Route("getall")]
-        public ActionResult<List<Advertisement>> GetAllAdvertisements()
+        public List<Advertisement> GetAllAdvertisements()
         {
             return mRepo.GetAllAdvertisements();
         }
@@ -26,7 +26,7 @@ namespace ServerAPI.Controllers
         
         [HttpGet]
         [Route("category/{category}")]
-        public ActionResult<List<Advertisement>> GetAdvertisementsByCategory(string category)
+        public List<Advertisement> GetAdvertisementsByCategory(string category)
         {
             return mRepo.GetAllByCategory(category);
         }
@@ -34,7 +34,7 @@ namespace ServerAPI.Controllers
         
         [HttpGet]
         [Route("price")]
-        public ActionResult<List<Advertisement>> GetAdvertisementsByPrice([FromQuery] double minPrice, [FromQuery] double maxPrice)
+        public List<Advertisement> GetAdvertisementsByPrice([FromQuery] double minPrice, [FromQuery] double maxPrice)
         {
             return mRepo.GetAdvertisementsByPrice(minPrice, maxPrice);
         }
@@ -42,7 +42,7 @@ namespace ServerAPI.Controllers
         
         [HttpGet]
         [Route("status/{status}")]
-        public ActionResult<List<Advertisement>> GetAdvertisementsByStatus(string status)
+        public List<Advertisement> GetAdvertisementsByStatus(string status)
         {
             return mRepo.GetAdvertisementsByStatus(status);
         }
@@ -50,19 +50,20 @@ namespace ServerAPI.Controllers
         
         [HttpGet]
         [Route("search")]
-        public ActionResult<List<Advertisement>> GetAdvertisementsByDetails([FromQuery] string searchKeyword)
+        public List<Advertisement> GetAdvertisementsByDetails([FromQuery] string searchKeyword)
         {
             return mRepo.GetAdvertisementsByDetails(searchKeyword);
         }
 
-        
+        /*
         [HttpPost]
-        public ActionResult<Advertisement> CreateAdvertisement2([FromBody] Advertisement advertisement)
+        public Advertisement CreateAdvertisement2([FromBody] Advertisement advertisement)
+
         {
             mRepo.CreateAdvertisement2(advertisement);
             return CreatedAtAction(nameof(GetAllAdvertisements), new { id = advertisement.Id }, advertisement);
-        }
+        }*/
 
-        
+
     }
 }

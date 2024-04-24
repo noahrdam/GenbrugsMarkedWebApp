@@ -31,7 +31,7 @@ else
                     <td>@purchase.TotalPrice</td>
                     <td>@purchase.Advertisement.Name</td>
                     <td>@purchase.User.Username</td>
-                    <td>@purchase.Classroom.ClassroomId</td>
+                    <td>@purchase.Advertisement.Classroom</td>
                 </tr>
             }
         </tbody>
@@ -41,7 +41,7 @@ else
 @code {
     
 
-    private string username;
+    private string? username;
 
     private List<Purchase> purchases = new();
    

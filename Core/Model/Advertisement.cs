@@ -24,19 +24,19 @@ namespace Core.Model
 
 		public double Price { get; set; }
 
-		public string Category { get; set; }
+		public string? Category { get; set; }
 
-		public string Description { get; set; }
+		public string? Description { get; set; }
 
-		public string Status { get; set; }
+		public string? Status { get; set; }
 
-		public string Image { get; set; }
+		public string? Image { get; set; }
 
-		public bool IsAtEAA { get; set; }
+		public bool? IsAtEAA { get; set; }
 
 		public User User { get; set; }
 
-		public string Classroom { get; set; }
+		public string? Classroom { get; set; }
 
 		public DateTime Date { get; set; }
 	}

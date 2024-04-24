@@ -82,9 +82,10 @@ namespace ServerAPI.Repositories
                                    .ToListAsync();
         }
 
-        public void CreateAdvertisement2(Advertisement advertisement)
+        
+        /*public void CreateAdvertisement2(Advertisement advertisement)
         {
             collection.InsertOne(advertisement);
-        }
+        }*/
     }
 }

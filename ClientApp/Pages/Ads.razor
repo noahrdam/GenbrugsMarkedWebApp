@@ -53,6 +53,7 @@ else
                 <th>Category</th>
                 <th>Status</th>
                 <th>Description</th>
+                <th>Classroom</th>
             </tr>
         </thead>
         <tbody>
@@ -66,6 +67,7 @@ else
                         <span class="@GetStatusClass(ad.Status)">@ad.Status</span>
                     </td>
                     <td>@ad.Description</td>
+                    <td>@ad.Classroom</td>
                 </tr>
             }
         </tbody>
@@ -79,7 +81,7 @@ else
     private string statusFilter = "";
     private double minPrice = 0;
     private double maxPrice = 1000;
-    private string serverURL = "http://localhost:5261/";
+    private string serverURL = "https://localhost:7148/";
 
     protected override async Task OnInitializedAsync()
     {
