@@ -32,8 +32,9 @@ namespace Core.Model
 
 		public string Image { get; set; }
 
+		public bool IsAtEAA { get; set; }
 
-		//public User User { get; set; }
+		public User User { get; set; }
 
 		public Classroom Classroom { get; set; }
 
