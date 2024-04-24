@@ -3,20 +3,18 @@ using MongoDB.Driver;
 using Core.Model;
 using ServerAPI.Repositories.Interfaces;
 
-
 namespace ServerAPI.Repositories
 {
     public class MyprofileRepository : IMyprofileRepository
     {
         private IMongoClient client;
         private IMongoCollection<Advertisement> collection;
+        private IMongoCollection<Advertisement> _advertisementsCollection;
 
         public MyprofileRepository()
         {
-
-            var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/?retryWrites=true&w=majority&appName=webshopDB";
-
-
+            // Erstat med din faktiske MongoDB-forbindelsesstreng
+            var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/";
 
             try
             {
@@ -32,32 +30,53 @@ namespace ServerAPI.Repositories
                 Console.WriteLine();
                 return;
             }
+             // Navnet på din database
+             var dbName = "Genbrug";
+            // Navnet på din samling i databasen, hvor annoncerne vil blive opbevaret
+            var collectionName = "Advertisement";
 
-            // Provide the name of the database and collection you want to use.
-            // If they don't already exist, the driver and Atlas will create them
-            // automatically when you first write data.
-            var dbName = "webshopDB";
-            var collectionName = "advertisements";
 
-            collection = client.GetDatabase(dbName)
-               .GetCollection<Advertisement>(collectionName);
-
+            // Hent samlingen fra databasen
+            collection = client.GetDatabase(dbName).GetCollection<Advertisement>(collectionName);
         }
 
-        public void CreateAdvertisement()
+
+
+        // Opretter en ny annonce og gemmer den i databasen
+        public void CreateAdvertisement(Advertisement advertisement)
         {
-
+           advertisement.Id = ObjectId.GenerateNewId();
+            collection.InsertOne(advertisement);   
         }
 
-        public void DeleteAdvertisement()
+        //Sletter en annonce fra databasen baseret på dens Id
+        public void DeleteById(int advertisementId)
         {
-
+            var deleteResult = collection.DeleteOne(
+                Builders<Advertisement>.Filter.Eq(r => r.AdvertisementId, advertisementId));
+        
         }
-
-        public void EditAdvertisement()
+       
+        
+        // Opdaterer en eksisterende annonce i databasen
+        public void UpdateAdvertisement(Advertisement ad)
         {
-
+            // Erstat den eksisterende annonce med den nye annonce i samlingen
+            collection.ReplaceOne(existingAd => existingAd.Id == ad.Id, ad);
         }
+
+
+
+        // Tilføj metoden for at hente alle annoncer for en given bruger
+
+        public IEnumerable<Advertisement> GetAdvertisementsByUserName(string userName)
+        {
+            // Assuming 'Advertisement' collection has an embedded 'User' object with a 'Username' field
+            var filter = Builders<Advertisement>.Filter.Eq("User.Username", userName);
+            var advertisements = _advertisementsCollection.Find(filter).ToList();
+            return advertisements;
+        }
+
 
     }
 }

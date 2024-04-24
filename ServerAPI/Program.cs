@@ -1,3 +1,10 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using ServerAPI.Repositories;
+using ServerAPI.Repositories.Interfaces;
+
 namespace ServerAPI
 {
     public class Program
@@ -10,6 +17,19 @@ namespace ServerAPI
 
             builder.Services.AddControllers();
 
+            builder.Services.AddSingleton<IMyprofileRepository, MyprofileRepository>();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("policy",
+                                  policy =>
+                                  {
+                                      policy.AllowAnyOrigin();
+                                      policy.AllowAnyMethod();
+                                      policy.AllowAnyHeader();
+                                  });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -17,6 +37,8 @@ namespace ServerAPI
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseCors("policy");
 
 
             app.MapControllers();
