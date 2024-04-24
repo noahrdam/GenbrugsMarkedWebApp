@@ -51,14 +51,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch user's purchase history from the server
-        purchases = await httpClient.GetFromJsonAsync<List<Purchase>>($"{serverurl}api/purchase/getall");
-    }
-
-    private async Task GetUserPurchases()
-    {
         // Fetch specific user's purchase history from the server using the provided username
         purchases = await httpClient.GetFromJsonAsync<List<Purchase>>($"{serverurl}api/purchase/getbyusername/{username}");
+        
+    }
+
+    private async Task GetAllPurchases()
+    {
+        // Fetch user's purchase history from the server
+        purchases = await httpClient.GetFromJsonAsync<List<Purchase>>($"{serverurl}api/purchase/getall");
     }
 }
 
