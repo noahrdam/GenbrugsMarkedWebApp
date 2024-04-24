@@ -10,6 +10,12 @@ namespace Core.Model
 {
     public class Advertisement
     {
+        public Advertisement()
+        {
+            
+            Date = DateTime.UtcNow;
+        }
+
         public ObjectId Id {  get; set; }
 
         public int AdvertisementId {  get; set; }
@@ -26,9 +32,12 @@ namespace Core.Model
 
 		public string Image { get; set; }
 
+		public bool IsAtEAA { get; set; }
 
 		public User User { get; set; }
 
-		//public Classroom Classroom { get; set; }
+		public Classroom Classroom { get; set; }
+
+		public DateTime Date { get; set; }
 	}
 }

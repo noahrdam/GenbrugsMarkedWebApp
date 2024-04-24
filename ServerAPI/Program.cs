@@ -1,9 +1,5 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using ServerAPI.Repositories;
 using ServerAPI.Repositories.Interfaces;
+using ServerAPI.Repositories;
 
 namespace ServerAPI
 {
@@ -23,12 +19,10 @@ namespace ServerAPI
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("policy",
-                                  policy =>
-                                  {
-                                      policy.AllowAnyOrigin();
-                                      policy.AllowAnyMethod();
-                                      policy.AllowAnyHeader();
-                                  });
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    });
             });
 
             builder.Services.AddControllers();
@@ -42,7 +36,6 @@ namespace ServerAPI
             app.UseAuthorization();
 
             app.UseCors("policy");
-
 
             app.MapControllers();
 
