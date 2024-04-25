@@ -2,6 +2,10 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+#titel {
+    margin-top: 10px;
+}
+
 .top-row {
     height: 3.5rem;
     background-color: white;
@@ -9,6 +13,7 @@
 
 .navbar-brand {
     font-size: 1.1rem;
+    color: black;
 }
 
 .bi {

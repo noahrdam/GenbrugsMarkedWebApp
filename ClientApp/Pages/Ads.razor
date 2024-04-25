@@ -29,7 +29,7 @@
         <option value="">Select a status...</option>
         <option value="Active">Active</option>
         <option value="Reserved">Reserved</option>
-        <option value="Inactive">Inactive</option>
+        <option value="Sold">Inactive</option>
     </select>
     <button @onclick="FilterByStatus">Filter</button>
 </div>
@@ -159,7 +159,7 @@ else
         var response = await httpClient.PostAsJsonAsync<Purchase>($"{serverURL}api/purchase/create", purchase);
         if (response.IsSuccessStatusCode)
         {
-            ad.Status = "Reserved"; 
+            ad.Status = "Sold"; 
             Console.WriteLine("Purchase successful");
             await httpClient.PutAsJsonAsync<Advertisement>($"{serverURL}api/ads/update", ad);
             await ReloadAdvertisements();
@@ -179,7 +179,7 @@ else
                 return "badge bg-success";
             case "Reserved":
                 return "badge bg-warning text-dark";
-            case "Inactive":
+            case "Sold":
                 return "badge bg-secondary";
             default:
                 return "badge bg-light text-dark";
