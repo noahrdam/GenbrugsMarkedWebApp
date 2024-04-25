@@ -42,11 +42,12 @@ namespace ServerAPI.Controllers
             return advertisements;
         }
 
-        [HttpPost]
-        [Route("updateadvertisement/{ad}")]
-        public void UpdateAdvertisement(Advertisement ad)
+        [HttpPut]
+        [Route("updateadvertisement")]
+        public IActionResult UpdateAdvertisement([FromBody]Advertisement ad)
         {
             mrepo.UpdateAdvertisement(ad);
+            return Ok();
         }
 
         /*

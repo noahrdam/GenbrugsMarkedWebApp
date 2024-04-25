@@ -68,8 +68,18 @@ namespace ServerAPI.Repositories
         // Opdaterer en eksisterende annonce i databasen
         public void UpdateAdvertisement(Advertisement ad)
         {
-            // Erstat den eksisterende annonce med den nye annonce i samlingen
-           // collection.UpdateOne(existingAd => existingAd.AdvertisementId == ad.AdvertisementId, ad);
+           var filter = Builders<Advertisement>.Filter.Eq(s=>s.AdvertisementId, ad.AdvertisementId);
+            var update = Builders<Advertisement>.Update
+                .Set(s=> s.Name, ad.Name)
+            .Set(s => s.Description, ad.Description)
+            .Set(s => s.Price, ad.Price)
+            .Set(s => s.Category, ad.Category)
+            .Set(s => s.Status, ad.Status)
+            .Set(s => s.Classroom, ad.Classroom)
+            .Set(s => s.Image, ad.Image);
+
+            var result = collection.UpdateOne(filter, update);
+
         }
 
 
