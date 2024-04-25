@@ -43,37 +43,33 @@
 {
     <p><em>Loading...</em></p>
 }
+else if (advertisements.Any())
+{
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        @foreach (var ad in advertisements)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <img src="@ad.Image" class="card-img-top" alt="Billede af @ad.Name" style="height:180px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@ad.Name</h5>
+                        <p class="card-text">@ad.Description</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Pris: @ad.Price.ToString("C")</li>
+                        <li class="list-group-item">Kategori: @ad.Category</li>
+                        <li class="list-group-item">Status: <span class="@GetStatusClass(ad.Status)">@ad.Status</span></li>
+                        <li class="list-group-item">Klasseværelse: @ad.Classroom</li>
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+}
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Description</th>
-                <th>Classroom</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ad in advertisements)
-            {
-                <tr>
-                    <td>@ad.Name</td>
-                    <td>@ad.Price</td>
-                    <td>@ad.Category</td>
-                    <td>
-                        <span class="@GetStatusClass(ad.Status)">@ad.Status</span>
-                    </td>
-                    <td>@ad.Description</td>
-                    <td>@ad.Classroom</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <p>No advertisements found.</p>
 }
-
 @code {
     private List<Advertisement> advertisements = new();
     private string searchText = "";
