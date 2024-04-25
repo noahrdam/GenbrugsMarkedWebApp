@@ -10,13 +10,17 @@ main {
 
 .sidebar {
     background-image: linear-gradient(180deg, white, white, #80B4C0, #80B4C0 );
+    border-style: solid;
+    border-right: solid;
+    border-width:1px;
+    border-color: lightgray;
 }
 
 .top-row {
-    background-color: white;
     background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGHK6kjN41fkk5ZDILFfvsOvXue_Gw32O1YR4iH7Lw&s);
     background-repeat: no-repeat;
-    background-position:center;
+    background-position: center;
+    background-color: white;
     border-bottom: 1px solid #d6d5d5;
     justify-content: flex-end;
     height: 5rem;
