@@ -3,40 +3,44 @@
 @inject HttpClient httpClient
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
+<head>
+    <link rel="stylesheet" href="css/pagestyle.css" />
+</head>
+
 <h1>Advertisements</h1>
 
-<div>
+<div class="col-6 mb-3">
     <input type="text" @bind="searchText" placeholder="Search by name or description..." />
     <button @onclick="SearchAdvertisements">Search</button>
 </div>
 
-<div>
+<div class ="col-12 mb-3">
     <select @bind="categoryFilter">
         <option value="">Select a category...</option>
-        <option value="Tøj">Tøj</option>
-        <option value="IT-udstyr">IT-udstyr</option>
-        <option value="Bøger">Bøger</option>
+        <option value="Clothes">Clothes</option>
+        <option value="IT">IT</option>
+        <option value="Books">Books</option>
     </select>
     <button @onclick="FilterAdvertisements">Filter</button>
 </div>
 
-<div>
+<div class="col-12 mb-3">
     <select @bind="statusFilter">
         <option value="">Select a status...</option>
-        <option value="Aktiv">Aktiv</option>
-        <option value="Reserveret">Reserveret</option>
-        <option value="Inaktiv">Inaktiv</option>
+        <option value="Active">Active</option>
+        <option value="Reserved">Reserved</option>
+        <option value="Inactive">Inactive</option>
     </select>
     <button @onclick="FilterByStatus">Filter</button>
 </div>
 
-<div>
+<div class="col-12 mb-3">
     <input type="number" @bind="minPrice" placeholder="Min price" min="0" />
     <input type="number" @bind="maxPrice" placeholder="Max price" min="0" />
     <button @onclick="FilterByPriceRange">Filter</button>
 </div>
 
-<div>
+<div class="col-12 mb-3">
     <button @onclick="ResetFiltersAndReload">Reset Filters</button>
 </div>
 
@@ -44,42 +48,33 @@
 {
     <p><em>Loading...</em></p>
 }
+else if (advertisements.Any())
+{
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        @foreach (var ad in advertisements)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <img src="@ad.Image" class="card-img-top" alt="Billede af @ad.Name" style="height:180px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@ad.Name</h5>
+                        <p class="card-text">@ad.Description</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Pris: @ad.Price.ToString("C")</li>
+                        <li class="list-group-item">Kategori: @ad.Category</li>
+                        <li class="list-group-item">Status: <span class="@GetStatusClass(ad.Status)">@ad.Status</span></li>
+                        <li class="list-group-item">Klasseværelse: @ad.Classroom</li>
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+}
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Description</th>
-                <th>Classroom</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ad in advertisements)
-            {
-                <tr>
-                    <td>@ad.Name</td>
-                    <td>@ad.Price.ToString("C")</td>
-                    <td>@ad.Category</td>
-                    <td>
-                        <span class="@GetStatusClass(ad.Status)">@ad.Status</span>
-                    </td>
-                    <td>@ad.Description</td>
-                    <td>@ad.Classroom</td>
-                    <td>
-                        <button class="btn btn-primary">Buy</button>
-                    </td>
-                    <td><button @onclick="@(() => BuyItem(ad))">Buy</button></td>
-                </tr>
-            }
-        </tbody>
-
-    </table>
+    <p>No advertisements found.</p>
 }
-
 @code {
     private List<Advertisement> advertisements = new();
     private string searchText = "";
@@ -178,11 +173,11 @@ else
     {
         switch (status)
         {
-            case "Aktiv":
+            case "Active":
                 return "badge bg-success";
-            case "Reserveret":
+            case "Reserved":
                 return "badge bg-warning text-dark";
-            case "Inaktiv":
+            case "Inactive":
                 return "badge bg-secondary";
             default:
                 return "badge bg-light text-dark";
