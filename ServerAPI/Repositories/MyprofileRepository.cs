@@ -13,8 +13,8 @@ namespace ServerAPI.Repositories
         public MyprofileRepository()
         {
             // Erstat med din faktiske MongoDB-forbindelsesstreng
-            //var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/";
-            var mongoUri = "mongodb://localhost:27017";
+            var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/";
+            //var mongoUri = "mongodb://localhost:27017";
 
             try
             {
@@ -31,7 +31,7 @@ namespace ServerAPI.Repositories
                 return;
             }
              // Navnet på din database
-             var dbName = "Genbrugsmarked";
+             var dbName = "Genbrug";
             // Navnet på din samling i databasen, hvor annoncerne vil blive opbevaret
             var collectionName = "Advertisement";
 

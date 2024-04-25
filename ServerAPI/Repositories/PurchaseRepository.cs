@@ -14,8 +14,8 @@ namespace ServerAPI.Repositories
         public PurchaseRepository()
         {
 
-            //var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/?retryWrites=true&w=majority&appName=webshopDB";
-            var mongoUri = "mongodb://localhost:27017";
+            var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/?retryWrites=true&w=majority&appName=webshopDB";
+            //var mongoUri = "mongodb://localhost:27017";
 
 
             try
@@ -36,7 +36,7 @@ namespace ServerAPI.Repositories
             // Provide the name of the database and collection you want to use.
             // If they don't already exist, the driver and Atlas will create them
             // automatically when you first write data.
-            var dbName = "Genbrugsmarked";
+            var dbName = "Genbrug";
             var collectionName = "Purchases";
 
             collection = client.GetDatabase(dbName)
