@@ -2,6 +2,8 @@
 @using Core.Model
 @inject HttpClient httpClient
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JS
+
 
 <head>
     <link rel="stylesheet" href="css/pagestyle.css" />
@@ -29,7 +31,7 @@
         <option value="">Select a status...</option>
         <option value="Active">Active</option>
         <option value="Reserved">Reserved</option>
-        <option value="Sold">Inactive</option>
+        <option value="Sold">Sold</option>
     </select>
     <button @onclick="FilterByStatus">Filter</button>
 </div>
@@ -135,40 +137,57 @@ else
         advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/getall");
     }
 
+
+
     private async Task BuyItem(Advertisement ad)
     {
         if (user == null)
         {
             Console.WriteLine("No user logged in. Please log in to make a purchase.");
-            return; // Stop the method if no user is logged in
+            return; 
         }
 
         if (ad.Status != "Active")
         {
-            Console.WriteLine("This advertisement is not available for purchase.");
+            await JS.InvokeVoidAsync("alert", $"This advertisement is currently {ad.Status} and not available for purchase.");
             return;
         }
 
         Purchase purchase = new Purchase
             {
                 TotalPrice = ad.Price,
-				Advertisement = ad,
-				User = user,
-			};
+                Advertisement = ad,
+                User = user,
+            };
 
         var response = await httpClient.PostAsJsonAsync<Purchase>($"{serverURL}api/purchase/create", purchase);
         if (response.IsSuccessStatusCode)
         {
-            ad.Status = "Sold"; 
             Console.WriteLine("Purchase successful");
-            await httpClient.PutAsJsonAsync<Advertisement>($"{serverURL}api/ads/update", ad);
-            await ReloadAdvertisements();
+            ad.Status = "Sold";
+            var updateResponse = await httpClient.PutAsJsonAsync<Advertisement>($"{serverURL}api/ads/update", ad);
+            if (updateResponse.IsSuccessStatusCode)
+            {
+                
+                await ReloadAdvertisements();
+
+                StateHasChanged();
+                
+                await JS.InvokeVoidAsync("showPurchaseAlert", ad.Name, ad.Price.ToString("C"), ad.Classroom, $"{user.Username}");
+            }
+            else
+            {
+                Console.WriteLine("Failed to update advertisement status.");
+            }
         }
         else
         {
             Console.WriteLine("Failed to purchase item: " + await response.Content.ReadAsStringAsync());
         }
     }
+
+
+
 
 
     private string GetStatusClass(string status)

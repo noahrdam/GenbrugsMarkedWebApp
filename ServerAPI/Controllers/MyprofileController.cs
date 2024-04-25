@@ -50,6 +50,24 @@ namespace ServerAPI.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Route("stats/{username}")]
+        public ActionResult<AdvertisementStats> GetAdvertisementStats(string username)
+        {
+            try
+            {
+                var stats = mrepo.GetUserAdvertisementStats(username);
+                if (stats == null) return NotFound($"No stats found for user {username}.");
+                return Ok(stats);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+
         /*
         // Constructor injects the repository through dependency injection
         public MyprofileController(IMyprofileRepository myprofileRepository)

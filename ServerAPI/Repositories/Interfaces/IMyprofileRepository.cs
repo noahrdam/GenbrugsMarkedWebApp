@@ -18,5 +18,7 @@ namespace ServerAPI.Repositories.Interfaces
 
         // Tilføj metoden for at hente alle annoncer for en given bruger
         public List<Advertisement> GetAdvertisementsByUserName(string username);
+
+        AdvertisementStats GetUserAdvertisementStats(string username);
     }
 }

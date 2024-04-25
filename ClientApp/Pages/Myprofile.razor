@@ -4,93 +4,114 @@
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+
+
+
+
 <head>
     <link rel="stylesheet" href="css/pagestyle.css" />
 </head>
 
-<!-- Overskriften ændrer sig afhængig af, om det er en ny eller eksisterende annonce der redigeres. -->
-<h3>@(isNewAd ? "Create Advertisement" : "Edit Advertisement")</h3>
-<!-- Formularen til redigering eller oprettelse af annoncer. Valideringen sikrer, at data er korrekte før indsendelse. -->
-<EditForm EditContext="@createEditContext" OnValidSubmit="@SaveAdvertisement" class="row p-3">
-    <!-- Disse komponenter håndterer valideringsbeskeder for brugerinput. -->
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <!-- Herunder er inputfelter til annoncedata, som brugeren kan udfylde og redigere. -->
-    <div class="col-md-6 mb-3">
-        <label for="adName">Advertisement Name</label>
-        <InputText id="adName" @bind-Value="makeAdvertisement.Name" placeholder="Write advertisement name..." class="form-control" />
-    </div>
-    <div class="col-md-6 mb-3">
-        <label for="classroom">Classroom</label>
-        <InputText id="classroom" @bind-Value="makeAdvertisement.Classroom" placeholder="Write Classroom name..." class="form-control" />
-    </div>
-    <div class="col-md-6 mb-3">
-        <label for="adPrice">Price</label>
-        <InputNumber id="adPrice" @bind-Value="makeAdvertisement.Price" placeholder="Write Price..." class="form-control" />
-    </div>
-    <div class="col-md-6 mb-3">
-        <label for="adDescription">Description</label>
-        <InputText id="adDescription" @bind-Value="makeAdvertisement.Description" placeholder="Write Description..." class="form-control" />
-    </div>
-    <div class="col-md-6 mb-3">
-        <label for="adCategory">Category</label>
-        <InputSelect id="adCategory" @bind-Value="makeAdvertisement.Category" class="form-control">
-            <option value="">Select a category...</option>
-            <option value="Clothes">Clothes</option>
-            <option value="IT">IT</option>
-            <option value="Books">Books</option>
-        </InputSelect>
-    </div>
-    <div class="col-md-6 mb-3">
-        <label for="adStatus">Status</label>
-        <InputSelect id="adStatus" @bind-Value="makeAdvertisement.Status" class="form-control">
-            <option value="">Select a status...</option>
-            <option value="Active">Active</option>
-            <option value="Reserved">Reserved</option>
-        </InputSelect>
-    </div>
-    <div class="col-md-6 mb-3">
-        <label for="adImage">Image URL</label>
-        <InputText id="adImage" @bind-Value="makeAdvertisement.Image" placeholder="Write URL..." class="form-control" />
-    </div>
 
-    <button type="submit">@ButtonLabel</button>
-</EditForm>
-<!-- Knap til at indlæse brugerens egne annoncer. -->
-<button @onclick="GetAllAdvertisementsByUser">Load My Advertisements</button>
-<!-- Viser en liste over annoncer, hvis de findes. -->
-@if (userAdvertisements != null && userAdvertisements.Any())
-{
-    <div class="row">
-        @foreach (var ad in userAdvertisements)
-        {
-            <div class="col-md-3 mb-4">
-                <div class="card h-100">
-                    <img src="@ad.Image" class="card-img-top" alt="Ad Image" style="height:200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">@ad.Name</h5>
-                        <p class="card-text">@ad.Description</p>
-                        <p class="card-text"><small class="text-muted">@ad.Price.ToString("C")</small></p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Category: @ad.Category</li>
-                        <li class="list-group-item">Status: @ad.Status</li>
-                        <li class="list-group-item">Classroom: @ad.Classroom</li>
-                    </ul>
-                    <div class="card-footer">
-                        <button class="btn btn-primary" @onclick="() => Edit(ad)">Edit</button>
-                        <button class="btn btn-danger" @onclick="() => DeleteById(ad.AdvertisementId)">Delete</button>
-                    </div>
+<div class="container mt-4">
+    @if (user != null)
+    {
+        <div class="welcome-section mb-4 p-3 bg-light border rounded">
+            <h2>@Greeting, @user.Username!</h2>
+            <div>
+                <h3>Total Advertisements: @totalAds</h3>
+                <h3>Active Advertisements: @activeAds</h3>
+                <h3>Sold Advertisements: @soldAds</h3>
+            </div>
+        </div>
+
+        <div class="ad-form-section mb-4 p-3 bg-white border rounded">
+            <h3>@(isNewAd ? "Create Advertisement" : "Edit Advertisement")</h3>
+            <EditForm EditContext="@createEditContext" OnValidSubmit="@SaveAdvertisement" class="row g-3">
+                <div class="col-md-6">
+                    <label for="adName">Advertisement Name</label>
+                    <InputText id="adName" @bind-Value="makeAdvertisement.Name" placeholder="Write advertisement name..." class="form-control" />
                 </div>
+                <div class="col-md-6">
+                    <label for="classroom">Classroom</label>
+                    <InputText id="classroom" @bind-Value="makeAdvertisement.Classroom" placeholder="Write Classroom name..." class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label for="adPrice">Price</label>
+                    <InputNumber id="adPrice" @bind-Value="makeAdvertisement.Price" placeholder="Write Price..." class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label for="adDescription">Description</label>
+                    <InputText id="adDescription" @bind-Value="makeAdvertisement.Description" placeholder="Write Description..." class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label for="adCategory">Category</label>
+                    <InputSelect id="adCategory" @bind-Value="makeAdvertisement.Category" class="form-control">
+                        <option value="">Select a category...</option>
+                        <option value="Clothes">Clothes</option>
+                        <option value="IT">IT</option>
+                        <option value="Books">Books</option>
+                    </InputSelect>
+                </div>
+                <div class="col-md-6">
+                    <label for="adStatus">Status</label>
+                    <InputSelect id="adStatus" @bind-Value="makeAdvertisement.Status" class="form-control">
+                        <option value="">Select a status...</option>
+                        <option value="Active">Active</option>
+                        <option value="Reserved">Reserved</option>
+                    </InputSelect>
+                </div>
+                <div class="col-md-6">
+                    <label for="adImage">Image URL</label>
+                    <InputText id="adImage" @bind-Value="makeAdvertisement.Image" placeholder="Write URL..." class="form-control" />
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">@ButtonLabel</button>
+                </div>
+            </EditForm>
+        </div>
+
+        <div class="mb-4">
+            <button class="btn btn-info" @onclick="GetAllAdvertisementsByUser">Load My Advertisements</button>
+        </div>
+
+        @if (userAdvertisements != null && userAdvertisements.Any())
+        {
+            <div class="ad-list-section row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var ad in userAdvertisements)
+                {
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="@ad.Image" class="card-img-top" alt="Ad Image" style="height:200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">@ad.Name</h5>
+                                <p class="card-text">@ad.Description</p>
+                                <p class="card-text"><small class="text-muted">@ad.Price.ToString("C")</small></p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Category: @ad.Category</li>
+                                <li class="list-group-item">Status: @ad.Status</li>
+                                <li class="list-group-item">Classroom: @ad.Classroom</li>
+                            </ul>
+                            <div class="card-footer">
+                                <button class="btn btn-primary" @onclick="() => Edit(ad)">Edit</button>
+                                <button class="btn btn-danger" @onclick="() => DeleteById(ad.AdvertisementId)">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         }
-    </div>
-}
-else
-{
-    <p>No advertisements found.</p>
-}
+        else
+        {
+            <p>No advertisements found.</p>
+        }
+    }
+</div>
 @code {
+
+
+
     // Her oprettes og initialiseres de nødvendige variable.
     private Advertisement makeAdvertisement = new Advertisement();
     private EditContext createEditContext;
@@ -98,9 +119,23 @@ else
     private string serverurl = "https://localhost:7148";
     private User? user;
     private bool isNewAd = true;
+    private int totalAds;
+    private int activeAds;
+    private int soldAds;
+
+    private string Greeting
+    {
+        get
+        {
+            var hour = DateTime.Now.Hour;
+            if (hour < 12) return "Good Morning";
+            if (hour < 17) return "Good Afternoon";
+            return "Good Evening";
+        }
+    }
 
     // Denne metode bliver kaldt når komponenten initialiseres.
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // Opretter et EditContext baseret på 'makeAdvertisement', som bruges til form validering.
         createEditContext = new EditContext(makeAdvertisement);
@@ -109,8 +144,41 @@ else
         if (user != null)
         {
             makeAdvertisement.User = user;
+            try
+            {
+                await LoadUserStatistics(user.Username);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading statistics: {ex.Message}");
+            }
+        }
+        StateHasChanged();
+    }
+    private async Task LoadUserStatistics(string username)
+    {
+        try
+        {
+            var response = await Http.GetAsync($"{serverurl}/api/myprofile/stats/{username}");
+            if (response.IsSuccessStatusCode)
+            {
+                var stats = await response.Content.ReadFromJsonAsync<AdvertisementStats>();
+                totalAds = stats.TotalAds;
+                activeAds = stats.ActiveAds;
+                soldAds = stats.SoldAds;
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"API Error: {error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading statistics: {ex.Message}");
         }
     }
+
 
     private void Edit(Advertisement ad)
     {
@@ -136,6 +204,7 @@ else
         {
             Console.WriteLine(isNewAd ? "Advertisement created successfully" : "Advertisement updated successfully");
             await GetAllAdvertisementsByUser(); // Refresh list
+            await LoadUserStatistics(user.Username);
         }
         else
         {
@@ -182,6 +251,7 @@ else
     {
         var username = user?.Username;
         var response = await Http.GetFromJsonAsync<List<Advertisement>>($"{serverurl}/api/myprofile/advertisements/{username}");
+        await LoadUserStatistics(user.Username);
         if (response != null)
         {
             userAdvertisements = response;

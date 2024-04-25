@@ -93,5 +93,18 @@ namespace ServerAPI.Repositories
             var advertisements = collection.Find(ad => ad.User.Username.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
             return advertisements;
         }
+
+        public AdvertisementStats GetUserAdvertisementStats(string username)
+        {
+            var ads = collection.AsQueryable()
+                .Where(ad => ad.User.Username == username);
+
+            return new AdvertisementStats
+            {
+                TotalAds = ads.Count(),
+                ActiveAds = ads.Count(ad => ad.Status == "Active"),
+                SoldAds = ads.Count(ad => ad.Status == "Sold")
+            };
+        }
     }
 }
