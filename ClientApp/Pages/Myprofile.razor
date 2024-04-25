@@ -4,6 +4,10 @@
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+<head>
+    <link rel="stylesheet" href="css/pagestyle.css" />
+</head>
+
 <!-- Overskriften ændrer sig afhængig af, om det er en ny eller eksisterende annonce der redigeres. -->
 <h3>@(isNewAd ? "Create Advertisement" : "Edit Advertisement")</h3>
 <!-- Formularen til redigering eller oprettelse af annoncer. Valideringen sikrer, at data er korrekte før indsendelse. -->
