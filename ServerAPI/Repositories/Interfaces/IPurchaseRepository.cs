@@ -5,8 +5,6 @@ namespace ServerAPI.Repositories.Interfaces
     public interface IPurchaseRepository
     {
         void MakePurchase(Purchase purchase);
-        List<Purchase> GetAllPurchases();
-
-        Task<List<Purchase>> GetPurchasesByUsername(string username);
+        List<Purchase> GetPurchasesByUsername(string username);
     }
 }

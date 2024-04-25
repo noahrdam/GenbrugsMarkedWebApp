@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Core.Model
 {
@@ -16,6 +17,8 @@ namespace Core.Model
             Date = DateTime.UtcNow;
         }
 
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId Id {  get; set; }
 
         public int AdvertisementId {  get; set; }

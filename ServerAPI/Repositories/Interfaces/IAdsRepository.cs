@@ -1,5 +1,6 @@
 ﻿using Core.Model;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using System.Collections.Generic;
 
 namespace ServerAPI.Repositories.Interfaces
@@ -12,6 +13,10 @@ namespace ServerAPI.Repositories.Interfaces
         List<Advertisement> GetAdvertisementsByStatus(string status);
         List<Advertisement> GetAdvertisementsByDetails(string searchKeyword);
         Task<List<Advertisement>> GetAdvertisementsSortedByDate();
+
+        Advertisement GetAdvertisementById(ObjectId objectId);
+
+        public void UpdateAdvertisement(Advertisement advertisement);
 
         //void CreateAdvertisement2(Advertisement advertisement);
     }

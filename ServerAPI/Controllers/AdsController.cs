@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServerAPI.Repositories.Interfaces;
 using Core.Model;
+using MongoDB.Bson;
+using static System.Net.WebRequestMethods;
+using MongoDB.Driver;
 
 namespace ServerAPI.Controllers
 {
@@ -53,6 +56,23 @@ namespace ServerAPI.Controllers
         public List<Advertisement> GetAdvertisementsByDetails([FromQuery] string searchKeyword)
         {
             return mRepo.GetAdvertisementsByDetails(searchKeyword);
+        }
+
+
+        [HttpGet]
+        [Route("get/{id}")]
+        public Advertisement GetAdvertisementById(string id)
+        {
+           
+                var advertisement = mRepo.GetAdvertisementById(new ObjectId(id));
+                return advertisement;
+        }
+
+        [HttpPost]
+        [Route("update")]
+        public void UpdateAdvertisement([FromBody] Advertisement advertisement)
+        {
+            mRepo.UpdateAdvertisement(advertisement);
         }
 
         /*

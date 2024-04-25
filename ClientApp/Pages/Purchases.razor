@@ -1,65 +1,65 @@
 ﻿@page "/purchases"
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject HttpClient httpClient
+@inject NavigationManager NavigationManager
 @using Core.Model
 
 
-<h1>Purchase History</h1>
 
-@if (purchases == null)
+@if (purchases != null)
 {
-    <p>Loading...</p>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Price</th>
+				<th>Seller</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var purchase in purchases)
+			{
+				<tr>
+					<td>@purchase.Advertisement.Name</td>
+					<td>@purchase.Advertisement.Description</td>
+					<td>@purchase.Advertisement.Price</td>
+					<td>@purchase.Advertisement.User.Username</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
 else
 {
-
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Purchase ID</th>
-                <th>Total Price</th>
-                <th>Advertisement</th>
-                <th>User</th>
-                <th>Classroom</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var purchase in purchases)
-            {
-                <tr>
-                    <td>@purchase.PurchaseId</td>
-                    <td>@purchase.TotalPrice</td>
-                    <td>@purchase.Advertisement.Name</td>
-                    <td>@purchase.User.Username</td>
-                    <td>@purchase.Advertisement.Classroom</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+	<p>No purchases found.</p>
 }
 
 @code {
-    
-
-    private string? username;
-
-    private List<Purchase> purchases = new();
-   
-    private string serverurl = "https://localhost:7148/";
 
 
+	private string? username;
 
-    protected override async Task OnInitializedAsync()
-    {
-        // Fetch specific user's purchase history from the server using the provided username
-        purchases = await httpClient.GetFromJsonAsync<List<Purchase>>($"{serverurl}api/purchase/getbyusername/{username}");
-        
-    }
+	private List<Purchase> purchases = new();
 
-    private async Task GetAllPurchases()
-    {
-        // Fetch user's purchase history from the server
-        purchases = await httpClient.GetFromJsonAsync<List<Purchase>>($"{serverurl}api/purchase/getall");
-    }
+	private string serverurl = "https://localhost:7148/";
+
+	private User? user;
+
+	protected override async Task OnInitializedAsync()
+	{
+		user = await localStorage.GetItemAsync<User>("loginUser");
+		if (user != null)
+		{
+			username = user.Username;
+			purchases = await httpClient.GetFromJsonAsync<List<Purchase>>($"{serverurl}api/purchase/getpurchases/{username}");
+		}
+		else
+		{
+			NavigationManager.NavigateTo("/");
+			purchases = new List<Purchase>(); // Ensuring no old data is shown
+		}
+	}
+
 }
 

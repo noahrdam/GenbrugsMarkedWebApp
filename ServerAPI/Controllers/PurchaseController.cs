@@ -17,30 +17,19 @@ namespace HelloBlazor.Server.Controllers
         }
 
         [HttpPost]
-        [Route("makepurchase")]
-        public void MakePurchase(Purchase purchase)
+        [Route("create")]
+        public void MakePurchase([FromBody] Purchase purchase)
         {
             mRepo.MakePurchase(purchase);
         }
 
         [HttpGet]
-        [Route("getall")]
-        public List<Purchase> GetAllPurchases()
+        [Route("getpurchases/{username}")]
+        public List<Purchase> GetPurchasesByUsername(string username)
         {
-            var list= mRepo.GetAllPurchases().ToList();
-            return list;
-        }
-
-        [HttpGet]
-        [Route("getbyusername/{username}")]
-        public async Task<ActionResult<List<Purchase>>> GetPurchasesByUsername(string username)
-        {
-            var purchases = await mRepo.GetPurchasesByUsername(username);
-            if (purchases == null || purchases.Count == 0)
-            {
-                return NotFound("No purchases found for the specified username.");
-            }
+            var purchases = mRepo.GetPurchasesByUsername(username);
             return purchases;
         }
+
     }
 }

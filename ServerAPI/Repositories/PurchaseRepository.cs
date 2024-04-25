@@ -14,8 +14,8 @@ namespace ServerAPI.Repositories
         public PurchaseRepository()
         {
 
-            var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/?retryWrites=true&w=majority&appName=webshopDB";
-
+            //var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/?retryWrites=true&w=majority&appName=webshopDB";
+            var mongoUri = "mongodb://localhost:27017";
 
 
             try
@@ -36,7 +36,7 @@ namespace ServerAPI.Repositories
             // Provide the name of the database and collection you want to use.
             // If they don't already exist, the driver and Atlas will create them
             // automatically when you first write data.
-            var dbName = "Genbrug";
+            var dbName = "Genbrugsmarked";
             var collectionName = "Purchases";
 
             collection = client.GetDatabase(dbName)
@@ -46,18 +46,14 @@ namespace ServerAPI.Repositories
 
         public void MakePurchase(Purchase purchase)
         {
+
             collection.InsertOne(purchase);
         }
 
-        public List<Purchase> GetAllPurchases()
+        public List<Purchase> GetPurchasesByUsername(string username)
         {
-            return collection.Find(_ => true).ToList();
-        }
-
-        public async Task<List<Purchase>> GetPurchasesByUsername(string username)
-        {
-            var filter = Builders<Purchase>.Filter.Eq(p => p.User.Username, username);
-            return await collection.Find(filter).ToListAsync();
+            var purchases = collection.Find(ad => ad.User.Username.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
+            return purchases;
         }
 
     }

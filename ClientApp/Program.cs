@@ -16,7 +16,6 @@ namespace ClientApp
 
             builder.Services.AddBlazoredLocalStorage();
 
-
             await builder.Build().RunAsync();
         }
 

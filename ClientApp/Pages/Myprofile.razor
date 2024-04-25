@@ -4,6 +4,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 
+
 <h3>Create advertisement</h3>
 
 <EditForm EditContext="@createEditContext" OnValidSubmit="@CreateAdvertisement" class="row p-3">
@@ -169,7 +170,5 @@
             userAdvertisements = new List<Advertisement>();
         }
     }
-
-    
 
 }

@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @using Core.Model
@@ -22,6 +22,7 @@
         <div class="col-md-12 mb-3">
             <button type="submit" class="btn btn-primary">Log in</button>
             <button type="button" class="btn btn-secondary" @onclick="ShowCreateAccount">Create an Account</button>
+            <button type="button" class="btn btn-info" @onclick="Logout">Logout</button>
         </div>
         @if (!string.IsNullOrEmpty(loginMessage))
         {
@@ -64,10 +65,11 @@ else
     private bool createAccount = false;
     private string loginMessage = "";
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         loginEditContext = new EditContext(loginUser);
         createEditContext = new EditContext(createUser);
+
     }
 
     private async Task<bool> VerifyLogin(string username, string password)
@@ -84,8 +86,8 @@ else
         if (user)
         {
             var thisuser = await GetUser(loginUser.Username);
-            await LocalStorage.SetItemAsync<User>("loginUser", thisuser);
-            var target = await LocalStorage.GetItemAsStringAsync("target");
+            await localStorage.SetItemAsync<User>("loginUser", thisuser);
+            var target = await localStorage.GetItemAsStringAsync("target");
             loginMessage = "User logged in successfully";
             NavigationManager.NavigateTo("/myprofile");
 
@@ -93,6 +95,7 @@ else
         else
         {
             loginMessage = "Failed to log in. Make sure you have an account";
+  
         }
     }
 
@@ -116,6 +119,12 @@ else
             var error = await response.Content.ReadAsStringAsync();
             Console.WriteLine("Failed to create user " + error);
         }
+    }
+
+    private async Task Logout()
+    {
+        await localStorage.RemoveItemAsync("loginUser");
+        NavigationManager.NavigateTo("/", forceLoad: true);
     }
 
     private void ShowCreateAccount()

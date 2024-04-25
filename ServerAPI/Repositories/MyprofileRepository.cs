@@ -13,7 +13,8 @@ namespace ServerAPI.Repositories
         public MyprofileRepository()
         {
             // Erstat med din faktiske MongoDB-forbindelsesstreng
-            var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/";
+            //var mongoUri = "mongodb+srv://noahrdam:3ppAuGCEF0ee9b6k@webshopdb.a704cgt.mongodb.net/";
+            var mongoUri = "mongodb://localhost:27017";
 
             try
             {
@@ -30,7 +31,7 @@ namespace ServerAPI.Repositories
                 return;
             }
              // Navnet på din database
-             var dbName = "Genbrug";
+             var dbName = "Genbrugsmarked";
             // Navnet på din samling i databasen, hvor annoncerne vil blive opbevaret
             var collectionName = "Advertisement";
 
@@ -52,7 +53,7 @@ namespace ServerAPI.Repositories
         public void DeleteById(int advertisementId)
         {
             var deleteResult = collection.DeleteOne(
-                Builders<Advertisement>.Filter.Eq(r => r.AdvertisementId, advertisementId));
+            Builders<Advertisement>.Filter.Eq(r => r.AdvertisementId, advertisementId));
         
         }
        

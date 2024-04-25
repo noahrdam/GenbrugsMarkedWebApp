@@ -1,6 +1,7 @@
 ﻿@page "/ads"
 @using Core.Model
 @inject HttpClient httpClient
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <h1>Advertisements</h1>
 
@@ -61,16 +62,21 @@ else
             {
                 <tr>
                     <td>@ad.Name</td>
-                    <td>@ad.Price</td>
+                    <td>@ad.Price.ToString("C")</td>
                     <td>@ad.Category</td>
                     <td>
                         <span class="@GetStatusClass(ad.Status)">@ad.Status</span>
                     </td>
                     <td>@ad.Description</td>
                     <td>@ad.Classroom</td>
+                    <td>
+                        <button class="btn btn-primary">Buy</button>
+                    </td>
+                    <td><button @onclick="@(() => BuyItem(ad))">Buy</button></td>
                 </tr>
             }
         </tbody>
+
     </table>
 }
 
@@ -82,10 +88,14 @@ else
     private double minPrice = 0;
     private double maxPrice = 1000;
     private string serverURL = "https://localhost:7148/";
+    private User? user;
+
 
     protected override async Task OnInitializedAsync()
     {
         await ReloadAdvertisements();
+        user = await localStorage.GetItemAsync<User>("loginUser");
+
     }
 
     private async Task SearchAdvertisements()
@@ -128,6 +138,41 @@ else
     {
         advertisements = await httpClient.GetFromJsonAsync<List<Advertisement>>($"{serverURL}api/ads/getall");
     }
+
+    private async Task BuyItem(Advertisement ad)
+    {
+        if (user == null)
+        {
+            Console.WriteLine("No user logged in. Please log in to make a purchase.");
+            return; // Stop the method if no user is logged in
+        }
+
+        if (ad.Status != "Active")
+        {
+            Console.WriteLine("This advertisement is not available for purchase.");
+            return;
+        }
+
+        Purchase purchase = new Purchase
+            {
+                TotalPrice = ad.Price,
+				Advertisement = ad,
+				User = user,
+			};
+
+        var response = await httpClient.PostAsJsonAsync<Purchase>($"{serverURL}api/purchase/create", purchase);
+        if (response.IsSuccessStatusCode)
+        {
+            ad.Status = "Reserved"; 
+            Console.WriteLine("Purchase successful");
+            await httpClient.PostAsJsonAsync<Advertisement>($"{serverURL}api/ads/update", ad);
+        }
+        else
+        {
+            Console.WriteLine("Failed to purchase item: " + await response.Content.ReadAsStringAsync());
+        }
+    }
+
 
     private string GetStatusClass(string status)
     {
