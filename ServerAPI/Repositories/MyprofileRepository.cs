@@ -9,7 +9,7 @@ namespace ServerAPI.Repositories
     {
         private IMongoClient client;
         private IMongoCollection<Advertisement> collection;
-
+        private int currentId;
         public MyprofileRepository()
         {
             // Erstat med din faktiske MongoDB-forbindelsesstreng
@@ -46,6 +46,13 @@ namespace ServerAPI.Repositories
         public void CreateAdvertisement(Advertisement advertisement)
         {
            advertisement.Id = ObjectId.GenerateNewId();
+
+            var max = 0;
+            if (collection.Count(Builders<Advertisement>.Filter.Empty) > 0)
+            {
+                max = collection.Find(Builders<Advertisement>.Filter.Empty).SortByDescending(r => r.AdvertisementId).Limit(1).ToList()[0].AdvertisementId;
+            }
+            advertisement.AdvertisementId = max + 1;
             collection.InsertOne(advertisement);   
         }
 
@@ -62,7 +69,7 @@ namespace ServerAPI.Repositories
         public void UpdateAdvertisement(Advertisement ad)
         {
             // Erstat den eksisterende annonce med den nye annonce i samlingen
-            collection.ReplaceOne(existingAd => existingAd.Id == ad.Id, ad);
+           // collection.UpdateOne(existingAd => existingAd.AdvertisementId == ad.AdvertisementId, ad);
         }
 
 

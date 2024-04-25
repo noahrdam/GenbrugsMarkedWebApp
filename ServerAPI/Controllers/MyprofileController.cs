@@ -42,7 +42,12 @@ namespace ServerAPI.Controllers
             return advertisements;
         }
 
-
+        [HttpPost]
+        [Route("updateadvertisement/{ad}")]
+        public void UpdateAdvertisement(Advertisement ad)
+        {
+            mrepo.UpdateAdvertisement(ad);
+        }
 
         /*
         // Constructor injects the repository through dependency injection

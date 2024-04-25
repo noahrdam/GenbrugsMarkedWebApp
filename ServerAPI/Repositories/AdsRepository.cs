@@ -91,9 +91,18 @@ namespace ServerAPI.Repositories
 
         public void UpdateAdvertisement(Advertisement advertisement)
         {
-            var filter = Builders<Advertisement>.Filter.Eq("Id", advertisement.Id);
+            var updateDef = Builders<Advertisement>.Update
+     .Set(x => x.Status, advertisement.Status);
+            collection.UpdateOne(x => x.AdvertisementId == advertisement.AdvertisementId, updateDef);
+
+            /*var filter = Builders<Advertisement>.Filter.Eq("Id", advertisement.Id);
             var update = Builders<Advertisement>.Update.Set("Status", advertisement.Status);
-            collection.UpdateOne(filter, update);
+            var result=collection.UpdateOne(filter, update);
+            if (result.IsAcknowledged)
+            {
+                Console.WriteLine(result.ModifiedCount.ToString());
+                Console.WriteLine("haha");
+            }*/
         }
 
         /*public void CreateAdvertisement2(Advertisement advertisement)

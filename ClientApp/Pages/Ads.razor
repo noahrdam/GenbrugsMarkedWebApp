@@ -161,7 +161,8 @@ else
         {
             ad.Status = "Reserved"; 
             Console.WriteLine("Purchase successful");
-            await httpClient.PostAsJsonAsync<Advertisement>($"{serverURL}api/ads/update", ad);
+            await httpClient.PutAsJsonAsync<Advertisement>($"{serverURL}api/ads/update", ad);
+            await ReloadAdvertisements();
         }
         else
         {

@@ -11,14 +11,10 @@ namespace Core.Model
 {
     public class Advertisement
     {
-        public Advertisement()
-        {
-            
-            Date = DateTime.UtcNow;
-        }
+        
 
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        //[BsonId]
+        //[BsonRepresentation(BsonType.ObjectId)]
         public ObjectId Id {  get; set; }
 
         public int AdvertisementId {  get; set; }
@@ -41,6 +37,6 @@ namespace Core.Model
 
 		public string? Classroom { get; set; }
 
-		public DateTime Date { get; set; }
+		public DateTime Date { get; set; } = DateTime.UtcNow;
 	}
 }

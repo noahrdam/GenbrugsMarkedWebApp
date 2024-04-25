@@ -59,30 +59,23 @@ namespace ServerAPI.Controllers
         }
 
 
-        [HttpGet]
-        [Route("get/{id}")]
-        public Advertisement GetAdvertisementById(string id)
-        {
+        //[HttpGet]
+        //[Route("get/{id}")]
+        //public Advertisement GetAdvertisementById(string id)
+        //{
            
-                var advertisement = mRepo.GetAdvertisementById(new ObjectId(id));
-                return advertisement;
-        }
+        //        var advertisement = mRepo.GetAdvertisementById(new ObjectId(id));
+        //        return advertisement;
+        //}
 
-        [HttpPost]
+        [HttpPut]
         [Route("update")]
-        public void UpdateAdvertisement([FromBody] Advertisement advertisement)
+        public void UpdateAdvertisementStatus([FromBody] Advertisement advertisement)
         {
             mRepo.UpdateAdvertisement(advertisement);
         }
 
-        /*
-        [HttpPost]
-        public Advertisement CreateAdvertisement2([FromBody] Advertisement advertisement)
-
-        {
-            mRepo.CreateAdvertisement2(advertisement);
-            return CreatedAtAction(nameof(GetAllAdvertisements), new { id = advertisement.Id }, advertisement);
-        }*/
+        
 
 
     }
