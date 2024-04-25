@@ -6,10 +6,10 @@ namespace ServerAPI.Repositories.Interfaces
     public interface IMyprofileRepository
     {
         // Tilføj en ny annonce til brugerens profil
-        public void CreateAdvertisement (Advertisement advertisement);
+        public void CreateAdvertisement(Advertisement advertisement);
 
         // Opdater en eksisterende annonce i brugerens profil
-       
+
         public void UpdateAdvertisement(Advertisement ad);
 
         // Slet en annonce fra brugerens profil baseret på dens Id

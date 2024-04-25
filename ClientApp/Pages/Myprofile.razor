@@ -1,25 +1,24 @@
 ﻿@page "/myprofile"
 @using Core.Model
+@using MongoDB.Bson
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
-<head>
-    <link rel="stylesheet" href="css/pagestyle.css" />
-</head>
-
-
-<h3>Create advertisement</h3>
-
-<EditForm EditContext="@createEditContext" OnValidSubmit="@CreateAdvertisement" class="row p-3">
+<!-- Overskriften ændrer sig afhængig af, om det er en ny eller eksisterende annonce der redigeres. -->
+<h3>@(isNewAd ? "Create Advertisement" : "Edit Advertisement")</h3>
+<!-- Formularen til redigering eller oprettelse af annoncer. Valideringen sikrer, at data er korrekte før indsendelse. -->
+<EditForm EditContext="@createEditContext" OnValidSubmit="@SaveAdvertisement" class="row p-3">
+    <!-- Disse komponenter håndterer valideringsbeskeder for brugerinput. -->
     <DataAnnotationsValidator />
     <ValidationSummary />
+    <!-- Herunder er inputfelter til annoncedata, som brugeren kan udfylde og redigere. -->
     <div class="col-md-6 mb-3">
         <label for="adName">Advertisement Name</label>
         <InputText id="adName" @bind-Value="makeAdvertisement.Name" placeholder="Write advertisement name..." class="form-control" />
     </div>
     <div class="col-md-6 mb-3">
-        <label for="adName">Classroom</label>
-        <InputText id="adName" @bind-Value="makeAdvertisement.Classroom" placeholder="Write Classroom name..." class="form-control" />
+        <label for="classroom">Classroom</label>
+        <InputText id="classroom" @bind-Value="makeAdvertisement.Classroom" placeholder="Write Classroom name..." class="form-control" />
     </div>
     <div class="col-md-6 mb-3">
         <label for="adPrice">Price</label>
@@ -31,102 +30,116 @@
     </div>
     <div class="col-md-6 mb-3">
         <label for="adCategory">Category</label>
-        <InputText id="adCategory" @bind-Value="makeAdvertisement.Category" placeholder="Write Category..." class="form-control"/>
+        <InputSelect id="adCategory" @bind-Value="makeAdvertisement.Category" class="form-control">
+            <option value="">Select a category...</option>
+            <option value="Clothes">Clothes</option>
+            <option value="IT">IT</option>
+            <option value="Books">Books</option>
+        </InputSelect>
     </div>
     <div class="col-md-6 mb-3">
         <label for="adStatus">Status</label>
-        <InputText id="adStatus" @bind-Value="makeAdvertisement.Status" placeholder="Write Status..." class="form-control" />
+        <InputSelect id="adStatus" @bind-Value="makeAdvertisement.Status" class="form-control">
+            <option value="">Select a status...</option>
+            <option value="Active">Active</option>
+            <option value="Reserved">Reserved</option>
+        </InputSelect>
     </div>
     <div class="col-md-6 mb-3">
         <label for="adImage">Image URL</label>
         <InputText id="adImage" @bind-Value="makeAdvertisement.Image" placeholder="Write URL..." class="form-control" />
     </div>
-   
 
-    <button id="CreateAd" type="submit">Create advertisement</button>
+    <button type="submit">@ButtonLabel</button>
 </EditForm>
-
-
-<EditForm EditContext="@deleteEditContext" OnValidSubmit="@DeleteById" class="row p-3">
-    <div class="col-md-6 mb-3">
-        <label for="adAdvertisementId">Advertisement ID</label>
-        <InputNumber id="adAdvertisementId" @bind-Value="deleteadvertisement.AdvertisementId" placeholder="Write Advertisement ID..." class="form-control" />
-    </div>
-    <button id="DeleteAd" type="submit">Delete Advertisement</button>
-</EditForm>
-
+<!-- Knap til at indlæse brugerens egne annoncer. -->
 <button @onclick="GetAllAdvertisementsByUser">Load My Advertisements</button>
-
-@if (userAdvertisements != null)
+<!-- Viser en liste over annoncer, hvis de findes. -->
+@if (userAdvertisements != null && userAdvertisements.Any())
 {
-    if (userAdvertisements.Any())
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Advertisement Name</th>
-                    <th>Price</th>
-                    <th>Description</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>Image</th>
-           
-                    <th>Classroom</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ad in userAdvertisements)
-                {
-                    <tr>
-                        <td>@ad.Name</td>
-                        <td>@ad.Price.ToString("C")</td>
-                        <td>@ad.Description</td>
-                        <td>@ad.Category</td>
-                        <td>@ad.Status</td>
-                        <th>@ad.Image</th>
-                        <td>@ad.Classroom</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(ad.Image))
-                            {
-                                <img src="@ad.Image" alt="Ad Image" style="height:50px;" />
-                            }
-                        </td>
-                        <td>
-                            <!--<button @onclick="@(() => DeleteAdvertisement(ad.AdvertisementId))">Delete</button>-->
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>No advertisements found.</p>
-    }
+    <div class="row">
+        @foreach (var ad in userAdvertisements)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img src="@ad.Image" class="card-img-top" alt="Ad Image" style="height:200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@ad.Name</h5>
+                        <p class="card-text">@ad.Description</p>
+                        <p class="card-text"><small class="text-muted">@ad.Price.ToString("C")</small></p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Category: @ad.Category</li>
+                        <li class="list-group-item">Status: @ad.Status</li>
+                        <li class="list-group-item">Classroom: @ad.Classroom</li>
+                    </ul>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" @onclick="() => Edit(ad)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteById(ad.Id)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
-
-
+else
+{
+    <p>No advertisements found.</p>
+}
 @code {
-    private Advertisement deleteadvertisement = new Advertisement();
+    // Her oprettes og initialiseres de nødvendige variable.
     private Advertisement makeAdvertisement = new Advertisement();
-    private Advertisement getAdvertisement = new Advertisement();
-    private EditContext deleteEditContext;
     private EditContext createEditContext;
     private List<Advertisement> userAdvertisements = new List<Advertisement>();
     private string serverurl = "https://localhost:7148";
     private User? user;
+    private bool isNewAd = true;
 
+    // Denne metode bliver kaldt når komponenten initialiseres.
     protected override async void OnInitialized()
     {
+        // Opretter et EditContext baseret på 'makeAdvertisement', som bruges til form validering.
         createEditContext = new EditContext(makeAdvertisement);
-        deleteEditContext = new EditContext(deleteadvertisement);
+        // Henter den nuværende bruger fra local storage, som skal tilknyttes annoncen.
         user = await LocalStorage.GetItemAsync<User>("loginUser");
         if (user != null)
         {
             makeAdvertisement.User = user;
-            getAdvertisement.User = user;
         }
     }
+
+    private void Edit(Advertisement ad)
+    {
+        makeAdvertisement = ad;
+        isNewAd = false;
+        createEditContext = new EditContext(makeAdvertisement); // Reinitialize the EditContext with the loaded advertisement
+    }
+
+    private async Task SaveAdvertisement()
+    {
+        HttpResponseMessage response;
+        if (isNewAd)
+        {
+            response = await Http.PostAsJsonAsync<Advertisement>($"{serverurl}/api/myprofile/createadvertisement", makeAdvertisement);
+        }
+        else
+        {
+            response = await Http.PutAsJsonAsync<Advertisement>($"{serverurl}/api/myprofile/updateadvertisement", makeAdvertisement);
+            isNewAd = true; // Reset flag after updating
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine(isNewAd ? "Advertisement created successfully" : "Advertisement updated successfully");
+            await GetAllAdvertisementsByUser(); // Refresh list
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Failed to {(isNewAd ? "create" : "update")} advertisement: " + error);
+        }
+    }
+    private string ButtonLabel => isNewAd ? "Create Advertisement" : "Update Advertisement";
 
     private async Task CreateAdvertisement()
     {
@@ -144,27 +157,28 @@
         }
     }
 
-    private async Task DeleteById()
+    private async Task DeleteById(ObjectId advertisementId)
     {
-        var response = await Http.DeleteAsync($"{serverurl}/api/myprofile/delete/{deleteadvertisement.AdvertisementId}");
+        var response = await Http.DeleteAsync($"{serverurl}/api/myprofile/delete/{advertisementId}");
         if (response.IsSuccessStatusCode)
         {
             Console.WriteLine("Advertisement deleted successfully");
-            // Optionally reset the form or navigate to another page
+            // Refresh the list of advertisements
+            await GetAllAdvertisementsByUser();
         }
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Failed to delete advertisement: " + error);
-            // Optionally handle the error, show an error message, etc.
+            Console.WriteLine($"Failed to delete advertisement: {error}");
+            // Handle the error accordingly
         }
     }
 
     private async Task GetAllAdvertisementsByUser()
     {
-       var username = user?.Username;
-       var response = await Http.GetFromJsonAsync<List<Advertisement>>($"{serverurl}/api/myprofile/advertisements/{username}");
-       if (response != null)
+        var username = user?.Username;
+        var response = await Http.GetFromJsonAsync<List<Advertisement>>($"{serverurl}/api/myprofile/advertisements/{username}");
+        if (response != null)
         {
             userAdvertisements = response;
         }
@@ -174,6 +188,7 @@
         }
     }
 
-    
+
+
 
 }
